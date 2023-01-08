@@ -1,45 +1,31 @@
-import { extract } from 'article-parser';
-import { FETCH_STORIES } from '../actions';
+/* eslint-disable default-param-last */
+/* eslint-disable no-case-declarations */
+/* eslint-disable default-param-last */
 
-function pullURLS(data) {
-  const pulled = data.map((i) => i.url);
-  return pulled;
-}
-
-function extractArticles(data, extractedArticles) {
-  extractedArticles = [];
-  data.forEach((i) => {
-    extract(i).then((article) => {
-      const content = article.content.replaceAll('<', ' <');
-      const parser = new DOMParser();
-      const parsedArticle = parser.parseFromString(content, 'text/html');
-      extractedArticles.push(parsedArticle.all[0].textContent);
-    });
-  });
-  return extractedArticles;
-}
+import { ADD_STORIES } from '../actions';
 
 const DEFAULT_STATE = {
-  3453: {
-    title: "Article Tile",
-    author: "",
-    image: "image url"
-    textContent: "F"
-    wordCount: 93843
-    beginnerWords: 3828
-    intermediateWords: 393
-    advancedWords: 213
-  }
-}
+  // 54654654654: {
+  //   id: 54654654654,
+  //   title: 'Funky Ckicken',
+  //   author: 'Chicken Little',
+  //   image:
+  //     'https://imgs.search.brave.com/Uhy7Bo59dFmB67DI6EyAQFCmup5YsEdEzhgxEK--Ro0/rs:fit:632:225:1/g:ce/aHR0cHM6Ly90c2Ux/Lm1tLmJpbmcubmV0/L3RoP2lkPU9JUC5y/WHQ0TVlXTGIzcDJu/RWNBaXZ5RTR3SGFG/aiZwaWQ9QXBp',
+  //   description: 'What came first? The chicken or the egg?',
+  //   source: 'Chickens.com',
+  //   htmlContent: '<div>CHICKENS</dive>',
+  //   wordCount: 777,
+  //   beginnerWords: 0.6,
+  //   intermediateWords: 0.1,
+  //   advancedWords: 0.2,
+  //   super: 0.1,
+  // },
+};
 
-const reducer = function (state = [], action) {
+const reducer = function (state = DEFAULT_STATE, action) {
   switch (action.type) {
-    case FETCH_STORIES:
-      console.log('payload', action.payload);
-      const pulledURLS = pullURLS(action.payload);
-      console.log('urls', pulledURLS);
-      const extractedArticles = extractArticles(pulledURLS);
-      return extractedArticles;
+    case ADD_STORIES:
+      return action.payload;
     default:
       return state;
   }
