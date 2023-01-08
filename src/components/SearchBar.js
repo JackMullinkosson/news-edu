@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 import { Form, InputGroup, Col, Row } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
@@ -5,25 +6,27 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import { fetchStories } from '../helpers/fetchStoryData';
-// import { getNewWords, getCocaWords } from '../helpers/getWords';
+import SearchFormDisabled from './SearchFormDisabled';
+
 import {
   addStories,
   changeDifficulty,
   changeLanguage,
   changeSortBy,
   setLoading,
+  changePageSize,
 } from '../actions';
 
 /* eslint-disable no-unused-vars */
 
-const SearchBar = ({ wordList, cocaWords }) => {
-  const loading = useSelector((state) => state.loading);
-  const [query, setQuery] = useState('');
-  const [pageSize, setPageSize] = useState(5);
+// const SearchBar = ({ wordList, cocaWords }) => {
+const SearchBar = () => {
+  const { loading, searchDisabled } = useSelector((state) => state);
+  const [query, setQuery] = useState('news');
+  const { pageSize } = useSelector((state) => state.sort);
+  const { cocaWords, wordList } = useSelector((state) => state.wordInfo);
 
-  const dispatch = useDispatch();
-
-  const handleSubmitClick = async () => {
+  const search = async () => {
     try {
       dispatch(setLoading(true));
       const storiesData = await fetchStories(
@@ -41,6 +44,14 @@ const SearchBar = ({ wordList, cocaWords }) => {
     }
   };
 
+  useEffect(() => {
+    search();
+  }, [pageSize]);
+
+  const dispatch = useDispatch();
+
+  const handleSubmitClick = () => search();
+
   const handleReadingLevelChange = (e) => {
     dispatch(changeDifficulty(e.target.value));
   };
@@ -51,33 +62,37 @@ const SearchBar = ({ wordList, cocaWords }) => {
 
   const handleResultsChange = (e) => {
     const userChoice = parseInt(e.target.value);
-    setPageSize(userChoice);
+    dispatch(changePageSize(userChoice));
   };
 
   return (
     <Row>
       <Col md={{ span: 6, offset: 3 }}>
         <Form className="m-3">
-          <Form.Group>
-            <InputGroup>
-              <Form.Control
-                onChange={(e) => setQuery(e.target.value)}
-                type="text"
-                placeholder="Search to find articles..."
-                className="search-bar"
-              />
-              <InputGroup.Text
-                onClick={handleSubmitClick}
-                role="button"
-                type="submit"
-                className="btn btn-search"
-                as={Link}
-                to="/"
-              >
-                Search
-              </InputGroup.Text>
-            </InputGroup>
-          </Form.Group>
+          {searchDisabled ? (
+            <SearchFormDisabled />
+          ) : (
+            <Form.Group>
+              <InputGroup>
+                <Form.Control
+                  onChange={(e) => setQuery(e.target.value)}
+                  type="text"
+                  placeholder="Search to find articles..."
+                  className="search-bar"
+                />
+                <InputGroup.Text
+                  onClick={handleSubmitClick}
+                  role="button"
+                  type="submit"
+                  className="btn btn-search"
+                  as={Link}
+                  to="/"
+                >
+                  Search
+                </InputGroup.Text>
+              </InputGroup>
+            </Form.Group>
+          )}
           <Row className="pt-3">
             <Col md={4}>
               <Form.Group>

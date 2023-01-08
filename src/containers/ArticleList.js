@@ -12,8 +12,13 @@ const ArticleList = ({ history }) => {
   const stories = useSelector((state) => state.articles);
   const loading = useSelector((state) => state.loading);
   const sort = useSelector((state) => state.sort);
+
   if (!stories) {
     return <ErrorPage />;
+  }
+
+  if (stories === 'no articles') {
+    return <NoResults />;
   }
 
   const sortedArticles = sortArticles(stories, sort);

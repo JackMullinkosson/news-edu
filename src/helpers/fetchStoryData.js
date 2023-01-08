@@ -1,6 +1,8 @@
 /* eslint-disable no-unused-vars */
 import { extract } from 'article-parser';
 import axios from 'axios';
+
+import getFakeArticleData from './getFakeArticleData';
 /* eslint-disable no-useless-escape */
 /* eslint-disable no-shadow */
 /* eslint-disable array-callback-return */
@@ -10,14 +12,13 @@ const API_KEY = process.env.REACT_APP_API_KEY;
 
 export const fetchStories = async (query, pageSize, wordList, cocaWords) => {
   try {
-    const results = await axios.get(
-      `https://newsapi.org/v2/everything?q=${query}&pageSize=${pageSize}&language=en&apiKey=${API_KEY}`
-    );
-    // const results = await axios.get('./data.json');
-  
-    const { articles } = results.data;
+    // const results = await axios.get(
+    //   `https://newsapi.org/v2/everything?q=${query}&pageSize=${pageSize}&language=en&apiKey=${API_KEY}`
+    // );
+    const results = getFakeArticleData(pageSize);
+    const articles = results.data ? results.data.articles : results;
     if (articles.length === 0) {
-      return null;
+      return 'no articles';
     }
 
     const formattedData = await formatData(articles, wordList, cocaWords);

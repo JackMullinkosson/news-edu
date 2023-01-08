@@ -6,6 +6,7 @@ import sortReducer from './sortReducer';
 import translatorReducer from './translatorReducer';
 import visitedReducer from './visitedReducer';
 import loadingReducer from './loadingReducer';
+import wordInfoReducer from './wordInfoReducer';
 
 const rootReducer = combineReducers({
   articles: articleReducer,
@@ -15,6 +16,8 @@ const rootReducer = combineReducers({
   translator: translatorReducer,
   visited: visitedReducer,
   loading: loadingReducer,
+  searchDisabled: () => true,
+  wordInfo: wordInfoReducer,
 });
 
 export default rootReducer;

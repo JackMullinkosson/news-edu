@@ -11,6 +11,7 @@ export const CHANGE_SORTBY = 'CHANGE_SORTBY';
 export const SET_TRANSLATOR = 'SET_TRANSLATOR';
 export const SET_VISITED = 'SET_VISITED';
 export const SET_LOADING = 'SET_LOADING';
+export const CHANGE_PAGESIZE = 'CHANGE_PAGESIZE';
 
 export function addStories(storiesData) {
   return {
@@ -130,5 +131,12 @@ export function setLoading(value) {
   return {
     type: SET_LOADING,
     payload: value,
+  };
+}
+
+export function changePageSize(pageSize) {
+  return {
+    type: CHANGE_PAGESIZE,
+    payload: pageSize,
   };
 }
