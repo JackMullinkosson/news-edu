@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-danger */
 /* eslint-disable react/prop-types */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
@@ -25,7 +26,7 @@ import { IntermediateHighlighted } from './ArticleTextElements/IntermediateHighl
 import { BothHighlighted } from './ArticleTextElements/BothHighlighted';
 
 const Article = ({ articleLocation }) => {
-  const reverso = new Reverso();
+  // const reverso = new Reverso();
   const stories = useSelector((state) => state[articleLocation]);
   const savedStories = useSelector((state) => state.saved);
   const translator = useSelector((state) => state.translator);
@@ -134,24 +135,30 @@ const Article = ({ articleLocation }) => {
     }
   }, [isHovering]);
 
-  const getContext = async (selectedWord) => {
-    const contextResponse = await reverso.getContext(
-      selectedWord,
-      'english',
-      translator.language
-    );
-    return contextResponse;
-  };
-
-  // const getCheck = async () => {
-  //   const check = await reverso.getContext('the', 'english', 'russian');
-  //   console.log(check);
+  // const getContext = async (selectedWord) => {
+  //   const contextResponse = await reverso.getContext(
+  //     selectedWord,
+  //     'english',
+  //     translator.language
+  //   );
+  //   return contextResponse;
   // };
-  // getCheck();
+
+  const getReversoContext = async (selectedWord) => {
+    const { language } = translator;
+    console.log(language);
+    const response = await axios.get(
+      `${process.env.REACT_APP_SERVER_URL}/reverso/${selectedWord}`,
+      {
+        params: { language },
+      }
+    );
+    return response.data;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      const contextResponse = await getContext(word);
+      const contextResponse = await getReversoContext(word);
       const sentences = contextResponse.examples;
       if (sentences.length < 2) {
         setContextError(true);
