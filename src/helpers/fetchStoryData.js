@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable no-unused-vars */
 import { extract } from 'article-parser';
 import axios from 'axios';
@@ -35,24 +36,20 @@ function pullURLS(data) {
   return pulled;
 }
 
-let articlePromises;
 async function extractArticles(data) {
-  articlePromises = await data.map((i) => extract(i));
+const extractedArticles=[];
+  for (let i = 0; i < data.length; i++) {
+    const queryParams = `?link=${data[i]}`;
+    const response = await axios.get(`http://localhost:5000/extract/article${queryParams}`);
+    const content = response.data.content.replaceAll('<', ' <');
+    const parser = new DOMParser();
+    const parsedArticle = parser.parseFromString(content, 'text/html');
+    extractedArticles.push(parsedArticle.all[0]?.textContent);
+  }
 
-  const extractedArticles = await Promise.allSettled(articlePromises)
-    .then((data) =>
-      data.map((article) => {
-        const content = article?.value?.content.replaceAll('<', ' <');
-        const parser = new DOMParser();
-        const parsedArticle = parser.parseFromString(content, 'text/html');
-        return parsedArticle.all[0]?.textContent;
-      })
-    )
-    .catch((err) => {
-      throw err;
-    });
   return extractedArticles;
 }
+
 
 async function getReadingLevelInfo(stories, wordList, cocaWords) {
   const storiesDifficulty = [];
@@ -116,11 +113,6 @@ const formatData = async (articles, wordList, cocaWords) => {
       wordList,
       cocaWords
     );
-    let extractedHTML;
-    await Promise.allSettled(articlePromises).then((data) => {
-      if (data.status === 'rejected') return;
-      extractedHTML = data;
-    });
     const storiesWithInfo = storiesDifficulty.reduce((acc, item, index) => {
       if (storiesDifficulty[index].total > 300) {
       acc[Date.parse(articles[index].publishedAt)] = {
@@ -131,7 +123,7 @@ const formatData = async (articles, wordList, cocaWords) => {
         image: articles[index].urlToImage || '',
         description: articles[index].description || '',
         source: articles[index].source.name || '',
-        htmlContent: extractedHTML[index].value?.content || '',
+        htmlContent: extractedArticles[index] || '',
         advancedWordsString:
           storiesDifficulty[index].advancedWordsArr
             .join(', ')
