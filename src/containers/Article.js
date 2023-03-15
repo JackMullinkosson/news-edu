@@ -147,14 +147,22 @@ const Article = ({ articleLocation }) => {
 
   const getReversoContext = async (selectedWord) => {
     const { language } = translator;
-    console.log(language);
-    const response = await axios.get(
-      `${process.env.REACT_APP_SERVER_URL}/reverso/${selectedWord}`,
-      {
-        params: { language },
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_SERVER_URL}/reverso/${selectedWord}`,
+        {
+          params: { language },
+        }
+      );
+      if (!response.ok) {
+        setContextError(true);
+        setArrOfSentences([]);
+        setDictionaryBoxIsLoading(false);
       }
-    );
-    return response.data;
+      return response.data;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {

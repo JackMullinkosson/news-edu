@@ -37,17 +37,24 @@ function pullURLS(data) {
 }
 
 async function extractArticles(data) {
-const extractedArticles=[];
+const rawHTML=[];
   for (let i = 0; i < data.length; i++) {
     const queryParams = `?link=${data[i]}`;
     const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/extract/article${queryParams}`);
-    const content = response.data.content.replaceAll('<', ' <');
+    rawHTML.push(response.data.content)
+  }
+  return rawHTML;
+}
+
+function parseExtractedArticles(rawHTML){
+  const extractedAndParsedArticles=[]
+  for (let i = 0; i < rawHTML.length; i++) {
+    const content = rawHTML[i].replaceAll('<', ' <');
     const parser = new DOMParser();
     const parsedArticle = parser.parseFromString(content, 'text/html');
-    extractedArticles.push(parsedArticle.all[0]?.textContent);
+    extractedAndParsedArticles.push(parsedArticle.all[0]?.textContent);
   }
-
-  return extractedArticles;
+  return extractedAndParsedArticles;
 }
 
 
@@ -107,7 +114,8 @@ async function getReadingLevelInfo(stories, wordList, cocaWords) {
 const formatData = async (articles, wordList, cocaWords) => {
   try {
     const pulledURLS = pullURLS(articles);
-    const extractedArticles = await extractArticles(pulledURLS);
+    const rawHTML = await extractArticles(pulledURLS);
+    const extractedArticles = parseExtractedArticles(rawHTML)
     const storiesDifficulty = await getReadingLevelInfo(
       extractedArticles,
       wordList,
@@ -123,7 +131,7 @@ const formatData = async (articles, wordList, cocaWords) => {
         image: articles[index].urlToImage || '',
         description: articles[index].description || '',
         source: articles[index].source.name || '',
-        htmlContent: extractedArticles[index] || '',
+        htmlContent: rawHTML[index] || '',
         advancedWordsString:
           storiesDifficulty[index].advancedWordsArr
             .join(', ')
