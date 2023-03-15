@@ -40,7 +40,7 @@ async function extractArticles(data) {
 const extractedArticles=[];
   for (let i = 0; i < data.length; i++) {
     const queryParams = `?link=${data[i]}`;
-    const response = await axios.get(`http://localhost:5000/extract/article${queryParams}`);
+    const response = await axios.get(`${process.env.REACT_APP_SERVER_URL}/extract/article${queryParams}`);
     const content = response.data.content.replaceAll('<', ' <');
     const parser = new DOMParser();
     const parsedArticle = parser.parseFromString(content, 'text/html');
