@@ -2,4 +2,4 @@ A web app for English learners to sort news articles based on their difficulty l
 
 Created with React.js, Redux, Bootstrap, Swiper.js, and localStorage. 
 
-See the deployed version: [news-edu.vercel.app] (https://news-edu.vercel.app/)
+See the deployed version: https://news-edu.vercel.app/
