@@ -37,6 +37,7 @@ function pullURLS(data) {
 }
 
 async function extractArticles(data) {
+  console.log(data)
 const rawHTML=[];
   for (let i = 0; i < data.length; i++) {
     const queryParams = `?link=${data[i]}`;
